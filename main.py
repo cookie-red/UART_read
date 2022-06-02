@@ -51,7 +51,8 @@ def decode(data):
                 'HR':hr,
                 'Temp':TEMP
                 }
-    print(physical)
+    return physical
+
 
 
 if __name__ == '__main__':
@@ -59,21 +60,23 @@ if __name__ == '__main__':
     i = 0
     ser = serial.Serial("COM5", 115200)
     print (ser.port)
+    file = open('info.csv','w',newline='')
+    file.write('Mileage,Calories,HR,Temp,Time\n') # 輸入標題
+    file.close
+
     while True:
         sline = ser.readline().decode()
         if sline[3:15] == '4003EE7F99DB': #先篩選測試手錶資料
             clear_data = catchClearData(sline)
             packet = decode_data(clear_data)
             data = packet[38:54] 
-            decode(data)
+            physical = decode(data)
+            print(physical)
+
+            physical_vaules = ",".join(list(physical.values()))
             nowTime = time.strftime('%H:%M:%S',time.localtime())
-            print(nowTime) # 查看接收數據的時間延遲
-           
 
-            
+            file = open('info.csv','a',newline='')
+            file.write(physical_vaules+","+nowTime+"\n") # 寫入手環資料
+            file.close
 
-      
-# mode macaddress  time longitude  latitude        thing          hopping     
-#  3       12        4     10          9             16             14
-# $05 79A4CFC90EC2 E800 121.5300FF 25.0400B3 B3000B005B000000 91599125620703
-#                                            38~
