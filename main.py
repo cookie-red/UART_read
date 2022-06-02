@@ -31,13 +31,19 @@ def hex2Dec(packet):
         i += 2
     return string
 
+# 血壓、步數、里程、卡路里需要用以hex2Dec_2來解碼(須對調:7104 -> 0471)
+def hex2Dec_2(packet):
+    string = packet[2:4] + packet[0:2]
+    dec = int(string,16)
+    return dec
+
 def decode(data):
-    mileage = int(hex2Dec(data[0:4])) # 里程
-    calories = int(hex2Dec(data[4:8])) # 卡路里
+    mileage = str(int(hex2Dec_2(data[0:4]))/1000) # 里程 (若收到的值須對掉 ex:7104 -> 0471)
+    calories = str(int(hex2Dec_2(data[4:8]))) # 卡路里 (若收到的值須對掉 ex:7104 -> 0471)
     # power = hex2Dec(data[8:10]) # 電力
-    hr = int(hex2Dec(data[10:12])) # 心率
+    hr = str(int(hex2Dec(data[10:12]))) # 心率
     temp = hex2Dec(data[12:16])
-    TEMP = float(temp[0:2]+'.'+temp[2:4]) # 體溫
+    TEMP = str(float(temp[0:2]+'.'+temp[2:4])) # 體溫
 
     physical = {'Mileage':mileage,  
                 'Calories':calories,
@@ -62,17 +68,11 @@ if __name__ == '__main__':
             decode(data)
             nowTime = time.strftime('%H:%M:%S',time.localtime())
             print(nowTime) # 查看接收數據的時間延遲
-            i = i + 1
-            print(i)
-            
-
+           
 
             
 
-
-
-
-
+      
 # mode macaddress  time longitude  latitude        thing          hopping     
 #  3       12        4     10          9             16             14
 # $05 79A4CFC90EC2 E800 121.5300FF 25.0400B3 B3000B005B000000 91599125620703
