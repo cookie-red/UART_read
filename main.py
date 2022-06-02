@@ -50,7 +50,7 @@ def decode(data):
 
 if __name__ == '__main__':
 
-
+    i = 0
     ser = serial.Serial("COM5", 115200)
     print (ser.port)
     while True:
@@ -60,6 +60,12 @@ if __name__ == '__main__':
             packet = decode_data(clear_data)
             data = packet[38:54] 
             decode(data)
+            nowTime = time.strftime('%H:%M:%S',time.localtime())
+            print(nowTime) # 查看接收數據的時間延遲
+            i = i + 1
+            print(i)
+            
+
 
             
 
